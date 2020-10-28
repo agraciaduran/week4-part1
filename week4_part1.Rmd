@@ -35,3 +35,62 @@ sierra_bighorns<- c(28,31,40,42,26,29,31)
 t.test(x=desert_bighorns, y=sierra_bighorns)
 ```
 
+## Part 2: Two sample t-test
+
+```{r}
+library(tidyverse)
+View(mpg)
+```
+
+Interested in SUV and compact cars 
+
+```{r}
+compact_suv <- mpg %>% 
+  filter(class %in% c("compact", "suv"))
+```
+
+### Exploratory data viz
+
+Histograms
+
+```{r}
+ggplot(data=compact_suv, aes(x=cty))+
+  geom_histogram(bins=15) + 
+  facet_wrap(~class)
+```
+
+### Quantile-quantile 
+```{r}
+ggplot(data = compact_suv, aes(sample=cty)) +
+  geom_qq()+
+  facet_wrap(~class)
+```
+### Descriptive statistics
+
+```{r}
+car_stats <- compact_suv %>% 
+  group_by(class) %>% 
+  summarise(mean_city=mean(cty),
+            sd_cty=sd(cty),
+            n=n()) #calculate number of obs
+
+car_stats
+```
+
+### 2-sample t-test
+
+create vectors containing observations for each sample (city gas mileage)
+
+```{r}
+compact_sample <- compact_suv %>% 
+  filter(class=="compact") %>% 
+  pull(cty) #makes into vector
+
+suv_sample <- compact_suv %>% 
+  filter(class=="suv") %>% 
+  pull(cty)
+
+t.test(x=compact_sample, suv_sample)
+```
+
+
